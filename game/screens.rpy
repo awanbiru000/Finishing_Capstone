@@ -246,17 +246,18 @@ screen quick_menu():
         hbox:
             style_prefix "quick"
 
-            xalign 0.888
+            xalign 0.868
             yalign 0.973
             spacing 45
             textbutton _("Back") action Rollback()
-            #textbutton _("History") action ShowMenu('history')
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
             textbutton _("Save") action ShowMenu('save')
+            textbutton _("Load") action ShowMenu('load')
+            textbutton _("Menu") action ShowMenu('menusingame')
+            #textbutton _("History") action ShowMenu('history')
             #textbutton _("Q.Save") action QuickSave()
             #textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -349,7 +350,7 @@ screen button_menu():
                 xalign 0.736
                 yalign 0.693
                 hover_sound "audio/SFX/kertas.mp3"
-                action Quit(confirm=not main_menu)
+                action Quit(confirm=True)
                   
 
 style navigation_button is gui_button
@@ -615,7 +616,114 @@ screen save():
 
     tag menu
 
-    use file_slots(_("Save"))
+    use file_slots_save(_("Save"))
+
+
+screen file_slots_save(title):
+    add "images/bg_loat1.png"
+    text "Save" xpos 970 ypos 15 size 88 font "fonts/Comfy Feeling.ttf"
+    hbox:
+        xalign 0.7
+        yalign 0.39
+        spacing 50
+        grid gui.file_slot_cols gui.file_slot_rows:
+            for i in range(6):
+                $ slot = i + 1
+                frame:
+                    background Frame("images/Asset_save.png")
+                    xsize 279
+                    ysize 223
+                    button:
+                        xalign -0.1
+                        yalign 0.5
+                        action FileAction(slot)
+                        has hbox
+                        add FileScreenshot(slot) xpos 1 ypos -2
+                        spacing 0
+                        text FileTime(slot, format=_("Save [i+1] "), empty=_("empty slot")) xpos -30 ypos 165:
+                            style "slot_time_text"
+                        text FileSaveName(slot):
+                            style "slot_name_text"
+
+                        key "save_delete" action FileDelete(slot)
+                        # frame:
+                        #     background Solid("f4e8dc")
+                        #     textbutton "Hapus" action FileDelete(slot)
+                        #     xpos -67 ypos 167
+
+    #frame:
+        #xalign 1.0
+        #yalign 1.0
+        #hbox:
+            #style_prefix "page"
+            #spacing gui.page_spacing
+
+            #if config.has_autosave:
+                #textbutton _("{#auto_page}Auto Save") action FilePage("auto")
+            
+            #if config.has_quicksave:
+                #textbutton _("{#quick_page}Quick Save") action FilePage("quick")
+
+            #for page in range(1,3):
+                #textbutton "[page]" action FilePage(page)
+
+        #xalign 0.0
+        #yalign 1.0
+        #textbutton "Return" action Return()
+        imagebutton:
+            style "return_button"
+            auto "Btnicons/ReturnButtons_%s.png"
+            xpos -1080
+            ypos 16
+            action [Return(),SetVariable("buttonasset",True)]
+            ## Buttons to access other pages.
+
+                #if config.has_sync:
+                #    if CurrentScreenName() == "save":
+                #        textbutton _("Upload Sync"):
+                #            action UploadSync()
+                #            xalign 0.5
+                #    else:
+                #        textbutton _("Download Sync"):
+                #            action DownloadSync()
+                #            xalign 0.5
+
+
+style page_label is gui_label
+style page_label_text is gui_label_text
+style page_button is gui_button
+style page_button_text is gui_button_text
+
+style slot_button is gui_button
+style slot_button_text is gui_button_text
+style slot_time_text is slot_button_text
+style slot_name_text is slot_button_text
+
+style page_label:
+    xpadding 50
+    ypadding 3
+
+
+style page_label_text:
+    textalign 0.5
+    layout "subtitle"
+    hover_color gui.hover_color
+
+style page_button:
+    properties gui.button_properties("page_button")
+
+style page_button_text:
+    properties gui.text_properties("page_button")
+
+style slot_button:
+    properties gui.button_properties("slot_button")
+
+style slot_button_text:
+    properties gui.text_properties("slot_button")
+
+
+
+
 
 
 screen load():
@@ -631,7 +739,7 @@ screen file_slots(title):
     hbox:
         xalign 0.7
         yalign 0.39
-        spacing 5
+        spacing 50
         grid gui.file_slot_cols gui.file_slot_rows:
             for i in range(6):
                 $ slot = i + 1
@@ -640,7 +748,7 @@ screen file_slots(title):
                     xsize 279
                     ysize 223
                     button:
-                        xalign 0.5
+                        xalign -0.1
                         yalign 0.5
 
                         action FileAction(slot)
@@ -655,10 +763,10 @@ screen file_slots(title):
 
                         text FileSaveName(slot):
                             style "slot_name_text"
-                        #frame:
-                            #background Solid("#E8DED8")
-                            #textbutton "Hapus" action FileDelete(slot)
-                            #xpos -37 ypos 137
+                        # frame:
+                        #     background Solid("f4e8dc")
+                        #     textbutton "Hapus" action FileDelete(slot)
+                        #     xpos -67 ypos 167
 
     #frame:
         #xalign 1.0
@@ -916,6 +1024,212 @@ style slider_button_text:
 
 style slider_vbox:
     xsize 450
+
+
+## Menu in-game
+
+screen menusingame():
+
+    tag menu
+
+    add gui.main_menu_background
+    frame:
+        xalign 0.5 yalign 0.5
+        xsize 1280 ysize 720
+        background ("images/Option_bg.png")
+        text "Settings" xalign 0.46 yalign 0.16 size 60 font "fonts/Comfy Feeling.ttf"
+
+        vbox:
+
+            hbox:
+                box_wrap True
+                xpos 450
+                ypos 150
+                if renpy.variant("pc") or renpy.variant("web"):
+
+                    vbox:
+                        xpos -160
+                        ypos 34
+                        style_prefix "radio"
+                        text "Display" size 51 font "fonts/Comfy Feeling.ttf"
+                        textbutton ("Window") action Preference("display", "window") xpos 6
+                        textbutton _("Fullscreen") action Preference("display", "fullscreen") xpos 6
+
+                vbox:
+                    xpos 85
+                    ypos 35
+                    style_prefix "check"
+                    text "Skip" size 51 font "fonts/Comfy Feeling.ttf"
+                    textbutton _("Unseen Text") action Preference("skip", "toggle") xpos 10
+                    textbutton _("After Choices") action Preference("after choices", "toggle") xpos 10
+                    textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle")) xpos 10
+
+                ## Additional vboxes of type "radio_pref" or "check_pref" can be
+                ## added here, to add additional creator-defined preferences.
+
+            null height (4 * gui.pref_spacing)
+
+            hbox:
+                xpos 220
+                ypos 176
+                style_prefix "slider"
+                #box_wrap True
+
+                vbox:
+
+                    label _("Text Speed")
+
+                    bar value Preference("text speed")
+
+                    label _("Auto-Forward Time")
+
+                    bar value Preference("auto-forward time")
+
+                vbox:
+
+                    if config.has_music:
+                        label _("Music Volume")
+
+                        hbox:
+                            bar value Preference("music volume")
+
+                    if config.has_sound:
+
+                        label _("Sound Volume")
+
+                        hbox:
+                            bar value Preference("sound volume")
+
+                            if config.sample_sound:
+                                textbutton _("Test") action Play("sound", config.sample_sound)
+
+
+                    #if config.has_voice:
+                        #label _("Voice Volume")
+
+                        #hbox:
+                            #bar value Preference("voice volume")
+
+                            #if config.sample_voice:
+                                #textbutton _("Test") action Play("voice", config.sample_voice)
+
+                    if config.has_music or config.has_sound or config.has_voice:
+                        null height gui.pref_spacing
+
+                        textbutton _("Mute All"):
+                            xalign 0.23
+                            action Preference("all mute", "toggle")
+                            style "mute_all_button"
+
+                        imagebutton:
+                            style "return_button"
+                            auto "Btnicons/ReturnButtons_%s.png"
+                            xpos -648
+                            ypos -491
+                            action [Return(),SetVariable("buttonasset",True)]
+
+            hbox:
+                box_wrap True
+                xpos 530
+                ypos 120
+                vbox:
+                    xpos 1.5
+                    ypos 0.5
+                    textbutton _("Back to Main Menu") action MainMenu()
+                            # hover_sound "audio/SFX/kertas.mp3"s
+                            # action Quit(confirm= not main_menu)
+
+
+style pref_label is gui_label
+style pref_label_text is gui_label_text
+style pref_vbox is vbox
+
+style radio_label is pref_label
+style radio_label_text is pref_label_text
+style radio_button is gui_button
+style radio_button_text is gui_button_text
+style radio_vbox is pref_vbox
+
+style check_label is pref_label
+style check_label_text is pref_label_text
+style check_button is gui_button
+style check_button_text is gui_button_text
+style check_vbox is pref_vbox
+
+style slider_label is pref_label
+style slider_label_text is pref_label_text
+style slider_slider is gui_slider
+style slider_button is gui_button
+style slider_button_text is gui_button_text
+style slider_pref_vbox is pref_vbox
+
+style mute_all_button is check_button
+style mute_all_button_text is check_button_text
+
+style pref_label:
+    top_margin gui.pref_spacing
+    bottom_margin 2
+
+style pref_label_text:
+    yalign 1.0
+
+style pref_vbox:
+    xsize 200
+
+style radio_vbox:
+    #spacing gui.pref_button_spacing
+    spacing 5
+
+style radio_button:
+    properties gui.button_properties("radio_button")
+    foreground "gui/button/radio_[prefix_]foreground.png"
+
+style radio_button_text:
+    properties gui.text_properties("radio_button")
+    xpos 15
+    font "fonts/Stanberry.ttf"
+    size 27
+
+style check_vbox:
+    #spacing gui.pref_button_spacing
+    spacing 5
+
+style check_button:
+    properties gui.button_properties("check_button")
+    foreground "gui/button/check_[prefix_]foreground.png"
+
+style check_button_text:
+    properties gui.text_properties("check_button")
+    xpos 15
+    font "fonts/Stanberry.ttf"
+    size 27
+
+style slider_slider:
+    xsize 350
+
+style slider_button:
+    properties gui.button_properties("slider_button")
+    yalign 0.5
+    left_margin 10
+
+style slider_button_text:
+    properties gui.text_properties("slider_button")
+
+style slider_vbox:
+    xsize 450
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## History screen ##############################################################
@@ -1201,15 +1515,19 @@ screen confirm(message, yes_action, no_action):
 
     frame:
         background Frame("gui/overlay/rect_angle.png")
-        xsize 500 ysize 195
-        xpos 380 ypos 290
+        xsize 730 ysize 295
+        xpos 280 ypos 190
 
         vbox:
             xalign .5
             yalign .5
             spacing 30
 
-            label _("Are you sure to quit?"):
+            # label _("Are you sure to quit ?"):
+            #     #style "confirm_prompt"
+            #     xalign 0.5
+
+            label _(message):
                 #style "confirm_prompt"
                 xalign 0.5
 
@@ -1256,6 +1574,10 @@ style confirm_button:
 
 style confirm_button_text:
     properties gui.text_properties("confirm_button")
+
+
+
+
 
 
 ## Skip indicator screen #######################################################
