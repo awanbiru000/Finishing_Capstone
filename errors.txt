@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/screens.rpy", line 645: text expects a non-empty block.
-    text FileSaveName(slot):
-                            ^
+File "game/screens.rpy", line 760: expected a keyword argument, colon, or end of line.
+    text FileTime(slot, format=_("Save [i+1]"), empty=_("empty slot")) xpos -125 ypos 165 0:
+                                                                                          ^
 
 Ren'Py Version: Ren'Py 8.3.3.24111502
-Fri Dec 13 14:44:04 2024
+Fri Dec 13 19:48:45 2024
