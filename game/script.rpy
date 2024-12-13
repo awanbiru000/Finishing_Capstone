@@ -3,6 +3,22 @@
     size 16
 # The game starts here.
 
+image splash = "logodepan.png"
+label splashscreen :
+    scene black
+    with Pause(1)
+
+    play sound "audio/SFX/gamelan2.mp3" volume 1.0
+    show splash : 
+        xalign 0.5 ypos 150
+    with dissolve
+    with Pause (3)
+
+    scene black with dissolve
+    with Pause (1)
+
+    return  
+
 label start:
     show screen black_screen
     with dissolve
@@ -874,14 +890,26 @@ label chapter_2_hutan_2:
     larasati "Sepertinya kalau seperti ini jadi menarik"
 
     # ---- mini game drag and drop -----
+    window hide
+    call screen puzzle_drag_1
+    window hide
+
+#     jump edukasi_parang
+
+# label edukasi_parang:
+
+
+label chapter_3_gunung:
+    show ui_edukasi_parang
+    pause 30.0
+    hide ui_edukasi_parang
+    window show
 
     narrator "Sesaat setelah selesai menggambar, Larasati rebahan di atas rumput sembari memandangi langit"
     narrator "Suasana saat ini membuatnya begitu sangat tenang, walaupun tetap harus mencari jalan keluar dari dunia ini"
     hide larasati_senyum
-    jump chapter_3_gunung
-    # ----- end chapter 2 -------
-
-label chapter_3_gunung:
+    # jump chapter_3_gunung
+    # # ----- end chapter 2 -------
     scene bukit 
     narrator "Larasati memandangi langit yang biru"
     narrator "Tiba-tiba Dia melihat bentuk awan yang berbeda dari yang sebelumnya"
@@ -1141,11 +1169,26 @@ label chapter_3_gunung_2:
     larasati "Bagaimana kalau..."
     
     # ------- Minigame Matching Puzzle ------
+    hide larasati_senyum
+    window hide
+    call screen puzzle_rotate_1
 
+label puzzle_rotate_megamendung_2:
+    call screen puzzle_rotate_2
+
+label chapter_3_gunung_3:
+    scene bg bukit
+    window hide
+    show ui_edukasi_megamendung
+    pause 30.0
+    hide ui_edukasi_megamendung
+    window show
+    show larasati_senang at left
     larasati "Begini"
     larasati "Hmm bagus juga"
     "Setelah itu Larasati menghampiri Makara yang sedang melihat pemandangan"
     "Larasati ingin melanjutkan perjalanannya"
+    show makaras_base at right
     makara "Apa ?"
     makara "Kamu mau melanjutkan perjalanan ?"
     larasati "Iyaa, kamu bagaimana ?"
@@ -1305,8 +1348,16 @@ label desa_kawung:
     show larasati_senyum
     larasati "Hmm....."
     larasati "Sepertinya motifnya begini"
-    narrator "PUZZLE DRAG N DROP"
-    hide larasati_senyum 
+    hide larasati_senyum
+    window hide
+    call screen puzzle_drag_2
+
+label desa_kawung_2:
+    window hide
+    show ui_edukasi_kawung
+    pause 30.0
+    hide ui_edukasi_kawung
+    window show
     show larasati_kalem
     narrator "Larasati membuat desain batik dengan serius"
     narrator "Tapi Dia juga memperhatikan Desa Kawung"
@@ -1652,12 +1703,11 @@ label pilihan_umum_quiz4:
     narrator "Hubungan dengan Ibunya menjadi baik"
     narrator "Hubungan anak dengan Ibu yang harmonis"
     narrator "Itulah hal yang harus terjadi"
-    stop music fadeout 1.5
     with dissolve
     jump epilog
 
 label epilog:
-    play music "BGM/All_Idle_Game_BGM.mp3" volume 0.7
+    # play music "BGM/All_Idle_Game_BGM.mp3" volume 0.7
     scene bg kamar_larasati
     with fade
     show larasati_kalem
@@ -1828,5 +1878,12 @@ label story_ending:
     larasati "Hmm...."
     larasati "Makara pernah bilang dia tahu dunia manusia karena seseorang pernah memberitahukannya"
     larasati "Kira-kira orang yang dimaksud siapa ya ?"
+    stop music fadeout 2.0
+    jump tamat
     
-    return
+label tamat:
+    window hide 
+    show screen black_screen
+    with dissolve
+
+    $ MainMenu(confirm=False)()

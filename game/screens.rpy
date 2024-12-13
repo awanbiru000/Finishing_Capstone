@@ -640,16 +640,15 @@ screen file_slots_save(title):
                         has hbox
                         add FileScreenshot(slot) xpos 1 ypos -2
                         spacing 0
-                        text FileTime(slot, format=_("Save [i+1] "), empty=_("empty slot")) xpos -30 ypos 165:
+                        text FileTime(slot, format=_("Save [i+1] "), empty=_("empty slot")) xpos -220 ypos 165:
                             style "slot_time_text"
                         text FileSaveName(slot):
                             style "slot_name_text"
 
-                        key "save_delete" action FileDelete(slot)
-                        # frame:
-                        #     background Solid("f4e8dc")
-                        #     textbutton "Hapus" action FileDelete(slot)
-                        #     xpos -67 ypos 167
+                    button:
+                        # background Solid("f4e8dc")
+                        textbutton "Hapus" action FileDelete(slot)
+                        xpos 185 ypos 175
 
     #frame:
         #xalign 1.0
@@ -758,9 +757,8 @@ screen file_slots(title):
                         add FileScreenshot(slot) xpos 1 ypos -2
                         spacing 0
 
-                        #text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("")):
-                            #style "slot_time_text"
-
+                        text FileTime(slot, format=_("Save [i+1]"), empty=_("empty slot")) xpos -125 ypos 165:
+                            style "slot_time_text"
                         text FileSaveName(slot):
                             style "slot_name_text"
                         # frame:
@@ -1378,7 +1376,7 @@ screen keyboard_help():
 
     hbox:
         label _("Escape")
-        text "  -  Acces the game menu." yalign 1.0 size 33
+        text "  -  Acces the save menu." yalign 1.0 size 33
 
     hbox:
         label _("Ctrl")
@@ -1515,7 +1513,7 @@ screen confirm(message, yes_action, no_action):
 
     frame:
         background Frame("gui/overlay/rect_angle.png")
-        xsize 730 ysize 295
+        xsize 710 ysize 275
         xpos 280 ypos 190
 
         vbox:
